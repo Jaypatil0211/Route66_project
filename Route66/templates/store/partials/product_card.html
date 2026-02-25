@@ -1,0 +1,37 @@
+<div class="product-card">
+    {% if product.is_super_treasure_hunt %}
+        <div class="badge badge-sth">⭐ Super TH</div>
+    {% elif product.is_treasure_hunt %}
+        <div class="badge badge-th">🔥 Treasure Hunt</div>
+    {% elif product.is_new_arrival %}
+        <div class="badge badge-new">NEW</div>
+    {% elif product.sale_price %}
+        <div class="badge badge-sale">-{{ product.discount_percent }}%</div>
+    {% endif %}
+
+    <a href="{{ product.get_absolute_url }}" class="product-img-wrap">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+        {% else %}
+            <img src="https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=800" alt="{{ product.name }}" loading="lazy">
+        {% endif %}
+    </a>
+
+    <div class="product-info">
+        {% if product.brand %}<div class="product-brand">{{ product.brand.name }}</div>{% endif %}
+        <a href="{{ product.get_absolute_url }}"><h3 class="product-name">{{ product.name }}</h3></a>
+        <div class="product-meta">
+            <span class="product-scale">{{ product.scale }}</span>
+            {% if product.car_year %}<span>{{ product.car_year }}</span>{% endif %}
+        </div>
+        <div class="product-price-row">
+            <span class="product-price">₹{{ product.display_price }}</span>
+            {% if product.sale_price %}<span class="product-original">₹{{ product.price }}</span>{% endif %}
+        </div>
+        {% if product.is_in_stock %}
+            <a href="{% url 'store:add_to_cart_product' product.id %}" class="btn-add-cart">Add to Cart</a>
+        {% else %}
+            <button class="btn-out-stock" disabled>Out of Stock</button>
+        {% endif %}
+    </div>
+</div>

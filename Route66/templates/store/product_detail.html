@@ -1,0 +1,149 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — Route66{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'store:home' %}">Home</a> /
+        <a href="{% url 'store:product_list' %}">Shop</a> /
+        <span>{{ product.name }}</span>
+    </div>
+
+    <div class="product-detail-layout">
+        <!-- IMAGE GALLERY -->
+        <div class="product-gallery">
+            <div class="main-image-wrap" id="mainImg">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="mainImage">
+                {% else %}
+                    {# Fallback: static image per product slug #}
+                    <img src="{% static 'products/' %}{{ product.slug }}.jpg" alt="{{ product.name }}" id="mainImage">
+                {% endif %}
+                {% if product.is_treasure_hunt %}<div class="overlay-badge">🔥 TREASURE HUNT</div>{% endif %}
+                {% if product.is_super_treasure_hunt %}<div class="overlay-badge sth">⭐ SUPER TH</div>{% endif %}
+            </div>
+            {% if product.image2 or product.image3 %}
+            <div class="thumbnail-row">
+                {% if product.image %}<img src="{{ product.image.url }}" onclick="swapImage(this.src)" class="thumb active">{% endif %}
+                {% if product.image2 %}<img src="{{ product.image2.url }}" onclick="swapImage(this.src)" class="thumb">{% endif %}
+                {% if product.image3 %}<img src="{{ product.image3.url }}" onclick="swapImage(this.src)" class="thumb">{% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- PRODUCT INFO -->
+        <div class="product-detail-info">
+            {% if product.brand %}<div class="detail-brand">{{ product.brand.name }}</div>{% endif %}
+            <h1 class="detail-name">{{ product.name }}</h1>
+
+            <div class="detail-meta">
+                <span class="meta-pill">Scale: {{ product.scale }}</span>
+                {% if product.car_year %}<span class="meta-pill">Year: {{ product.car_year }}</span>{% endif %}
+                {% if product.color %}<span class="meta-pill">Color: {{ product.color }}</span>{% endif %}
+                {% if product.series %}<span class="meta-pill">Series: {{ product.series }}</span>{% endif %}
+            </div>
+
+            {% if avg_rating %}
+            <div class="rating-display">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= avg_rating|floatformat:"0"|add:"0" %}⭐{% else %}☆{% endif %}
+                {% endfor %}
+                <span>({{ reviews.count }} reviews)</span>
+            </div>
+            {% endif %}
+
+            <div class="detail-price-block">
+                <span class="detail-price">₹{{ product.display_price }}</span>
+                {% if product.sale_price %}
+                    <span class="detail-original">₹{{ product.price }}</span>
+                    <span class="detail-savings">Save {{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            <p class="detail-description">{{ product.description }}</p>
+
+            <div class="stock-info">
+                {% if product.is_in_stock %}
+                    <span class="in-stock">✓ In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                    <span class="out-stock">✗ Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <div class="detail-actions">
+                {% if product.is_in_stock %}
+                    <a href="{% url 'store:add_to_cart_product' product.id %}" class="btn-add-large">Add to Cart 🛒</a>
+                {% else %}
+                    <button class="btn-disabled" disabled>Out of Stock</button>
+                {% endif %}
+                <a href="{% url 'store:toggle_wishlist' product.id %}" class="btn-wishlist {% if in_wishlist %}active{% endif %}">
+                    {% if in_wishlist %}♥ Saved{% else %}♡ Wishlist{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="reviews-section">
+        <h2>Customer Reviews</h2>
+        {% if reviews %}
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <strong>{{ review.user.username }}</strong>
+                    <span class="review-stars">{% for i in "12345" %}{% if forloop.counter <= review.rating %}⭐{% else %}☆{% endif %}{% endfor %}</span>
+                    <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                </div>
+                <h4>{{ review.title }}</h4>
+                <p>{{ review.body }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-reviews">No reviews yet. Be the first!</p>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <div class="review-form-wrap">
+            <h3>Write a Review</h3>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in review_form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn-primary">Submit Review</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- RELATED PRODUCTS -->
+    {% if related %}
+    <div class="related-section">
+        <h2>You May Also Like</h2>
+        <div class="product-grid">
+            {% for p in related %}
+            {% include 'store/partials/product_card.html' with product=p %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+function swapImage(src) {
+    document.getElementById('mainImage').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}
+{% endblock %}

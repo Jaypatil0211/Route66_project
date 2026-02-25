@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+{% block title %}Hot Wheels Cases — Route66{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Hot Wheels Cases 📦</h1><p>Buy full cases — best value for collectors and resellers</p></div></div>
+<div class="container" style="padding:40px 24px 80px;">
+<div class="cases-grid">
+{% for case in cases %}
+<a href="{{ case.get_absolute_url }}" class="case-card">
+  {% if case.image %}<img src="{{ case.image.url }}" alt="{{ case.name }}" class="case-img">
+  {% else %}<div class="case-img-placeholder">📦</div>{% endif %}
+  <div class="case-info">
+    <div class="case-badge">{{ case.year }} · Case {{ case.series_letter }}</div>
+    <h3>{{ case.name }}</h3>
+    <p>{{ case.cars_per_case }} cars per case</p>
+    <div class="case-price">₹{{ case.price }}</div>
+    {% if case.stock > 0 %}<div style="font-size:12px;color:#4CAF50;margin-top:6px;font-family:var(--font-ui);font-weight:600;">✓ In Stock</div>
+    {% else %}<div style="font-size:12px;color:var(--red);margin-top:6px;">Out of Stock</div>{% endif %}
+  </div>
+</a>
+{% empty %}
+<div class="empty-state"><div class="empty-icon">📦</div><h3>No cases available yet</h3><p>Check back soon!</p></div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

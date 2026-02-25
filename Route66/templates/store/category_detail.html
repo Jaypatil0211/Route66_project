@@ -1,0 +1,9 @@
+{% extends 'store/base.html' %}
+{% block title %}{{ category.name }} — Route66{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>{{ category.name }}</h1><p>{{ products.count }} products</p></div></div>
+<div class="container" style="padding:40px 24px 80px;">
+{% if products %}<div class="product-grid">{% for product in products %}{% include 'store/partials/product_card.html' with product=product %}{% endfor %}</div>
+{% else %}<div class="empty-state"><div class="empty-icon">🚗</div><h3>No products in this category yet</h3><a href="{% url 'store:product_list' %}" class="btn-primary">Browse All</a></div>{% endif %}
+</div>
+{% endblock %}

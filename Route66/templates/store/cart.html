@@ -1,0 +1,68 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Your Cart — Route66{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Your Cart 🛒</h1>
+    </div>
+</div>
+
+<div class="container cart-layout">
+    {% if items %}
+    <div class="cart-items">
+        {% for item in items %}
+        <div class="cart-row">
+            <div class="cart-img">
+                {% if item.product and item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                {% elif item.case and item.case.image %}
+                    <img src="{{ item.case.image.url }}" alt="{{ item.case.name }}">
+                {% else %}
+                    <div class="cart-placeholder">🚗</div>
+                {% endif %}
+            </div>
+            <div class="cart-item-info">
+                <h3>{% if item.product %}{{ item.product.name }}{% else %}{{ item.case.name }}{% endif %}</h3>
+                {% if item.product %}
+                <span class="item-scale">{{ item.product.scale }}</span>
+                {% else %}
+                <span class="item-scale">{{ item.case.cars_per_case }} cars</span>
+                {% endif %}
+            </div>
+            <div class="cart-qty">
+                <form method="post" action="{% url 'store:update_cart' item.id %}" class="qty-form">
+                    {% csrf_token %}
+                    <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}">+</button>
+                </form>
+            </div>
+            <div class="cart-price">₹{{ item.subtotal }}</div>
+            <a href="{% url 'store:remove_from_cart' item.id %}" class="cart-remove">✕</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Subtotal</span><span>₹{{ cart.total }}</span></div>
+        <div class="summary-row"><span>Shipping</span><span>{% if cart.total >= 2499 %}FREE 🎉{% else %}₹99{% endif %}</span></div>
+        <div class="summary-row total-row">
+            <span>Total</span>
+            <span>₹{% if cart.total >= 2499 %}{{ cart.total }}{% else %}{{ cart.total|add:'99' }}{% endif %}</span>
+        </div>
+        <a href="{% url 'store:checkout' %}" class="btn-checkout">Proceed to Checkout →</a>
+        <a href="{% url 'store:product_list' %}" class="btn-continue">Continue Shopping</a>
+    </div>
+    {% else %}
+    <div class="empty-state full-width">
+        <div class="empty-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added any models yet.</p>
+        <a href="{% url 'store:product_list' %}" class="btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

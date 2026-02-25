@@ -1,0 +1,27 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Login — Route66{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">ROUTE<span>66</span></div>
+        <h1>Welcome Back</h1>
+        <p class="auth-sub">Login to your Route66 account</p>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label>
+                    {% if field.name == 'username' %}Email address{% else %}{{ field.label }}{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn-auth">Login 🏁</button>
+        </form>
+        <p class="auth-switch">New here? <a href="{% url 'store:signup' %}">Create an account</a></p>
+    </div>
+</div>
+{% endblock %}

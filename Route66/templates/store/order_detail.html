@@ -1,0 +1,40 @@
+{% extends 'store/base.html' %}
+{% block title %}Order #{{ order.id }} — Route66{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Order #{{ order.id }} 🏁</h1><p>Placed on {{ order.created_at|date:"F d, Y" }}</p></div></div>
+<div class="container" style="padding:40px 24px;display:grid;grid-template-columns:1fr 320px;gap:32px;">
+<div>
+  <div style="background:var(--dark2);border:1px solid var(--dark3);border-radius:8px;overflow:hidden;">
+    <div style="padding:20px;border-bottom:1px solid var(--dark3);font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);">Items</div>
+    {% for item in order.items.all %}
+    <div style="display:flex;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--dark3);align-items:center;">
+      <div>
+        <div style="font-family:var(--font-ui);font-size:16px;font-weight:700;color:var(--white);">
+          {% if item.product %}{{ item.product.name }}{% elif item.case %}{{ item.case.name }}{% endif %}
+        </div>
+        <div style="font-size:13px;color:var(--grey);margin-top:3px;">Qty: {{ item.quantity }} × ₹{{ item.price }}</div>
+      </div>
+      <div style="font-family:var(--font-display);font-size:22px;color:var(--white);">₹{{ item.subtotal }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if order.shipping_address %}
+  <div style="margin-top:24px;background:var(--dark2);border:1px solid var(--dark3);border-radius:8px;padding:20px;">
+    <div style="font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:10px;">Shipping To</div>
+    <div style="color:var(--light-grey);font-size:15px;line-height:1.6;">{{ order.shipping_address }}</div>
+  </div>
+  {% endif %}
+</div>
+<div>
+  <div style="background:var(--dark2);border:1px solid var(--dark3);border-radius:8px;padding:24px;">
+    <div style="font-family:var(--font-display);font-size:28px;color:var(--white);margin-bottom:20px;">Summary</div>
+    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--dark3);font-size:15px;color:var(--light-grey);"><span>Status</span>
+      <span style="font-family:var(--font-ui);font-weight:700;color:{% if order.status == 'delivered' %}#4CAF50{% elif order.status == 'cancelled' %}var(--red){% else %}var(--yellow){% endif %};">{{ order.get_status_display }}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:16px 0;font-family:var(--font-display);font-size:26px;color:var(--white);"><span>Total</span><span>₹{{ order.total_price }}</span></div>
+    {% if order.tracking_number %}<div style="font-size:13px;color:var(--grey);">Tracking: {{ order.tracking_number }}</div>{% endif %}
+    <a href="{% url 'store:order_list' %}" class="btn-primary" style="display:block;text-align:center;margin-top:16px;">← Back to Orders</a>
+  </div>
+</div>
+</div>
+{% endblock %}

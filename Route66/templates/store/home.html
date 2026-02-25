@@ -1,0 +1,184 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Route66 — Diecast Legends | Home{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg-road"></div>
+    <div class="hero-content">
+        <div class="hero-eyebrow">Born From The Race</div>
+        <h1 class="hero-title">
+            <span class="hero-route">ROUTE</span>
+            <span class="hero-66">66</span>
+        </h1>
+        <p class="hero-subtitle">India's Premier Diecast Destination<br>Hot Wheels • Scale Models • Collector's Editions</p>
+        <div class="hero-ctas">
+            <a href="{% url 'store:product_list' %}" class="btn-hero-primary">Shop Now</a>
+            <a href="{% url 'store:cases_list' %}" class="btn-hero-outline">View Cases</a>
+        </div>
+    </div>
+    <div class="hero-mcqueen">
+        <div class="hero-mcqueen-box">
+            <img src="{% static 'mcqueen.jpeg' %}" alt="Lightning McQueen" />
+        </div>
+    </div>
+    <div class="hero-cars-row">
+        <div class="hero-car car1">🚗</div>
+        <div class="hero-car car2">🏎️</div>
+        <div class="hero-car car3">🚕</div>
+    </div>
+</section>
+
+<!-- CATEGORY QUICK LINKS -->
+<section class="section categories-strip">
+    <div class="container">
+        <div class="cat-grid">
+            <a href="{% url 'store:product_list' %}?scale=1:64" class="cat-card">
+                <div class="cat-icon">🏎️</div>
+                <span>1:64 Scale</span>
+            </a>
+            <a href="{% url 'store:product_list' %}?scale=1:18" class="cat-card">
+                <div class="cat-icon">🚗</div>
+                <span>1:18 Scale</span>
+            </a>
+            <a href="{% url 'store:cases_list' %}" class="cat-card">
+                <div class="cat-icon">📦</div>
+                <span>HW Cases</span>
+            </a>
+            <a href="{% url 'store:product_list' %}?scale=1:43" class="cat-card">
+                <div class="cat-icon">🏁</div>
+                <span>1:43 Scale</span>
+            </a>
+            <a href="{% url 'store:product_list' %}?scale=1:24" class="cat-card">
+                <div class="cat-icon">🔥</div>
+                <span>1:24 Scale</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+{% if featured_products %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Models</h2>
+            <a href="{% url 'store:product_list' %}" class="section-link">View All →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in featured_products %}
+            {% include 'store/partials/product_card.html' with product=product %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- TREASURE HUNT SPOTLIGHT -->
+{% if treasure_hunts %}
+<section class="section th-section">
+    <div class="container">
+        <div class="th-banner">
+            <div class="th-text">
+                <div class="th-eyebrow">🔥 RARE FINDS</div>
+                <h2>Treasure Hunts</h2>
+                <p>The most sought-after Hot Wheels. Limited production. High value. Every collector's dream.</p>
+                <a href="{% url 'store:product_list' %}" class="btn-th">Hunt Now</a>
+            </div>
+            <div class="th-products">
+                {% for p in treasure_hunts %}
+                <a href="{{ p.get_absolute_url }}" class="th-card">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                    {% else %}
+                        <img src="{% static 'products/' %}{{ p.slug }}.jpg" alt="{{ p.name }}">
+                    {% endif %}
+                    <span>{{ p.name }}</span>
+                    <strong>₹{{ p.display_price }}</strong>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- NEW ARRIVALS -->
+{% if new_arrivals %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">New Arrivals</h2>
+            <a href="{% url 'store:product_list' %}" class="section-link">View All →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in new_arrivals %}
+            {% include 'store/partials/product_card.html' with product=product %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- HOT WHEELS CASES -->
+{% if featured_cases %}
+<section class="section cases-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Hot Wheels Cases</h2>
+            <a href="{% url 'store:cases_list' %}" class="section-link">All Cases →</a>
+        </div>
+        <div class="cases-grid">
+            {% for case in featured_cases %}
+            <a href="{{ case.get_absolute_url }}" class="case-card">
+                {% if case.image %}
+                    <img src="{{ case.image.url }}" alt="{{ case.name }}" class="case-img">
+                {% else %}
+                    <div class="case-img-placeholder">📦</div>
+                {% endif %}
+                <div class="case-info">
+                    <div class="case-badge">{{ case.year }} · Case {{ case.series_letter }}</div>
+                    <h3>{{ case.name }}</h3>
+                    <p>{{ case.cars_per_case }} cars per case</p>
+                    <div class="case-price">₹{{ case.price }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- WHY ROUTE66 -->
+<section class="section why-section">
+    <div class="container">
+        <h2 class="section-title centered">Why Route66?</h2>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">✅</div>
+                <h3>100% Authentic</h3>
+                <p>Every model is sourced directly from authorized distributors. No fakes, ever.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">📦</div>
+                <h3>Fast Shipping</h3>
+                <p>Orders dispatched within 24hrs. Safe, secure packaging to protect your collection.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🔥</div>
+                <h3>Rare Finds</h3>
+                <p>Treasure Hunts, Super TH, limited editions — we source what others can't.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🏆</div>
+                <h3>Collector Community</h3>
+                <p>Built by collectors, for collectors. We know what you're looking for.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'store/base.html' %}
+{% block title %}Search: {{ query }} — Route66{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Search Results</h1><p>{{ products.count|add:cases.count }} results for "{{ query }}"</p></div></div>
+<div class="container" style="padding:40px 24px 80px;">
+{% if products %}
+<h2 style="font-family:var(--font-display);font-size:28px;color:var(--white);margin-bottom:20px;">Products</h2>
+<div class="product-grid">{% for p in products %}{% include 'store/partials/product_card.html' with product=p %}{% endfor %}</div>
+{% endif %}
+{% if cases %}
+<h2 style="font-family:var(--font-display);font-size:28px;color:var(--white);margin:40px 0 20px;">Cases</h2>
+<div class="cases-grid">{% for case in cases %}
+<a href="{{ case.get_absolute_url }}" class="case-card">
+  <div class="case-img-placeholder">📦</div>
+  <div class="case-info"><div class="case-badge">{{ case.year }} · Case {{ case.series_letter }}</div><h3>{{ case.name }}</h3><div class="case-price">₹{{ case.price }}</div></div>
+</a>{% endfor %}</div>
+{% endif %}
+{% if not products and not cases %}
+<div class="empty-state"><div class="empty-icon">🔍</div><h3>No results found</h3><p>Try different keywords</p><a href="{% url 'store:product_list' %}" class="btn-primary">Browse All</a></div>
+{% endif %}
+</div>
+{% endblock %}

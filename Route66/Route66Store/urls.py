@@ -24,6 +24,8 @@ urlpatterns = [
     # Wishlist
     path('wishlist/', views.wishlist_view, name='wishlist'),
     path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
-    # Auth
+    # Auth — custom views with toast notifications
     path('signup/', views.signup_view, name='signup'),
+    path('accounts/login/', views.login_view, name='login'),
+    path('accounts/logout/', views.logout_view, name='logout'),
 ]

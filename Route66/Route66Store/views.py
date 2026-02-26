@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
 from django.db.models import Q, Avg
@@ -240,11 +240,39 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, f'Welcome to Route66, {user.username}! 🏎️')
+            messages.success(request, f'Welcome to Route66, {user.username}!')
             return redirect('store:home')
     else:
         form = SignUpForm()
     return render(request, 'store/signup.html', {'form': form})
+
+
+def login_view(request):
+    """Custom login view that fires a success toast on login."""
+    if request.user.is_authenticated:
+        return redirect('store:home')
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.username}! You are now logged in.')
+            next_url = request.GET.get('next', '') or request.POST.get('next', '')
+            return redirect(next_url if next_url else 'store:home')
+        else:
+            messages.error(request, 'Invalid username or password. Please try again.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
+
+
+def logout_view(request):
+    """Custom logout view that fires an info toast after logout."""
+    username = request.user.username if request.user.is_authenticated else ''
+    logout(request)
+    if username:
+        messages.info(request, f'You have been logged out successfully. See you soon, {username}!')
+    return redirect('store:home')
 
 
 def search(request):

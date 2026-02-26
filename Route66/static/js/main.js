@@ -9,14 +9,24 @@ if (hamburger && mobileMenu) {
     });
 }
 
-// Auto-dismiss messages after 4 seconds
-document.querySelectorAll('.alert').forEach(alert => {
-    setTimeout(() => {
-        alert.style.opacity = '0';
-        alert.style.transform = 'translateX(50px)';
-        alert.style.transition = 'all 0.4s ease';
-        setTimeout(() => alert.remove(), 400);
-    }, 4000);
+// ── Toast notifications ───────────────────────────────────────────────────────
+function dismissToast(toast) {
+    toast.classList.add('hiding');
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+}
+
+document.querySelectorAll('.toast').forEach(toast => {
+    // Auto-dismiss after 5 s (matches CSS progress bar)
+    const timer = setTimeout(() => dismissToast(toast), 5000);
+
+    // Manual close button
+    const btn = toast.querySelector('.toast-close');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            clearTimeout(timer);
+            dismissToast(toast);
+        });
+    }
 });
 
 // Product card hover effect - stagger on load

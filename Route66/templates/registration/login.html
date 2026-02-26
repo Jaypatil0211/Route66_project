@@ -10,16 +10,19 @@
         <p class="auth-sub">Login to your Route66 account</p>
         <form method="post">
             {% csrf_token %}
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
             {% for field in form %}
             <div class="form-group">
                 <label>
-                    {% if field.name == 'username' %}Email address{% else %}{{ field.label }}{% endif %}
+                    {% if field.name == 'username' %}Username{% else %}{{ field.label }}{% endif %}
                 </label>
                 {{ field }}
                 {% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn-auth">Login 🏁</button>
+            <button type="submit" class="btn-auth">Login</button>
         </form>
         <p class="auth-switch">New here? <a href="{% url 'store:signup' %}">Create an account</a></p>
     </div>

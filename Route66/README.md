@@ -8,6 +8,7 @@ A Cars movie themed Django shopping website for diecast models, Hot Wheels cases
 Route66/
 ├── Route66/          # Django project settings
 ├── store/            # Main app (products, cart, orders)
+├── media/products    # Product images
 ├── static/           # CSS, JS, images
 ├── templates/        # HTML templates
 ├── manage.py
@@ -28,7 +29,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 3. Create superuser (admin)
+### 3. Create superuser (only for admin)
 ```bash
 python manage.py createsuperuser
 ```
